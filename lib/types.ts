@@ -12,6 +12,7 @@ export interface Member {
   heroImage?: string;   // override รูป hero
   successImage?: string; // รูปโปสเตอร์ส่วนตัว (แสดงเด่นในส่วนรีวิว)
   videoUrl?: string;    // ลิงก์วิดีโอแนะนำ (YouTube ฯลฯ)
+  musicUrl?: string;    // เพลงประกอบ (เว้นว่าง = ใช้ /music.mp3)
   createdAt: string;
 }
 
