@@ -248,7 +248,7 @@ export default function SalePage({ member }: { member: Member }) {
               <span className="tag">เริ่มต้น</span>
               <div className="lvl">รายได้เสริม</div>
               <div className="amt">
-                ฿8,000<small>+ / เดือน</small>
+                ฿15,000<small>+ / เดือน</small>
               </div>
               <ul>
                 <li>แบ่งปันสินค้าให้คนใกล้ตัว</li>
