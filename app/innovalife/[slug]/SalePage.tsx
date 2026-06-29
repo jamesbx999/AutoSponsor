@@ -267,38 +267,47 @@ export default function SalePage({ member }: { member: Member }) {
           </div>
           <div className="proof-grid">
             <div className="quote q1 reveal">
-              <div className="stars">★★★★★</div>
-              <p>"เริ่มจากแม่บ้านที่ไม่เคยขายของออนไลน์ ใช้หน้าเว็บที่ทีมแจกให้ ตอนนี้มีรายได้เสริมพอผ่อนรถได้แล้วค่ะ"</p>
-              <div className="who">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={PROOF_IMG} alt="" />
-                <div>
-                  <b>คุณแนน</b>
-                  <span>สมาชิก 8 เดือน</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="q-banner" src="/success-1.jpg" alt="ความสำเร็จของทีม" />
+              <div className="q-body">
+                <div className="stars">★★★★★</div>
+                <p>"เริ่มจากแม่บ้านที่ไม่เคยขายของออนไลน์ ใช้หน้าเว็บที่ทีมแจกให้ ตอนนี้มีรายได้เสริมพอผ่อนรถได้แล้วค่ะ"</p>
+                <div className="q-name">
+                  <span className="q-badge">น</span>
+                  <div>
+                    <b>คุณแนน</b>
+                    <span>สมาชิก 18 วัน</span>
+                  </div>
                 </div>
               </div>
             </div>
             <div className="quote q2 reveal">
-              <div className="stars">★★★★★</div>
-              <p>"จุดเปลี่ยนคือมีพี่เลี้ยงสอนจริง และมีระบบให้ลูกทีมก๊อปไปใช้ได้ทันที ทีมโตเร็วกว่าที่คิดมากครับ"</p>
-              <div className="who">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={PROOF_IMG} alt="" />
-                <div>
-                  <b>คุณวิทย์</b>
-                  <span>ผู้นำทีม</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="q-banner" src="/success-2.jpg" alt="ความสำเร็จของทีม" />
+              <div className="q-body">
+                <div className="stars">★★★★★</div>
+                <p>"จุดเปลี่ยนคือมีพี่เลี้ยงสอนจริง และมีระบบให้ลูกทีมก๊อปไปใช้ได้ทันที ทีมโตเร็วกว่าที่คิดมากครับ"</p>
+                <div className="q-name">
+                  <span className="q-badge">ว</span>
+                  <div>
+                    <b>คุณวิทย์</b>
+                    <span>ผู้นำทีม</span>
+                  </div>
                 </div>
               </div>
             </div>
             <div className="quote q3 reveal">
-              <div className="stars">★★★★★</div>
-              <p>"ชอบที่สินค้ามีงานวิจัยรองรับ เลยแนะนำได้อย่างสบายใจ ไม่ต้องตื๊อใคร ลูกค้าทักมาเองจากหน้าเว็บ"</p>
-              <div className="who">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={PROOF_IMG} alt="" />
-                <div>
-                  <b>คุณพลอย</b>
-                  <span>สมาชิก 1 ปี</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="q-banner" src="/success-3.jpg" alt="ความสำเร็จของทีม" />
+              <div className="q-body">
+                <div className="stars">★★★★★</div>
+                <p>"ชอบที่สินค้ามีงานวิจัยรองรับ เลยแนะนำได้อย่างสบายใจ ไม่ต้องตื๊อใคร ลูกค้าทักมาเองจากหน้าเว็บ"</p>
+                <div className="q-name">
+                  <span className="q-badge">พ</span>
+                  <div>
+                    <b>คุณพลอย</b>
+                    <span>สมาชิก 19 วัน</span>
+                  </div>
                 </div>
               </div>
             </div>
