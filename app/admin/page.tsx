@@ -420,7 +420,8 @@ export default function AdminPage() {
               <div className="grid2">
                 <div className="field">
                   <label>หัวข้อ hero (เว้นว่าง = ค่าเริ่มต้น)</label>
-                  <input value={modal.headline || ""} onChange={(e) => setModal({ ...modal, headline: e.target.value })} placeholder="ปรับแต่งได้ตามต้องการ" />
+                  <input value={modal.headline || ""} onChange={(e) => setModal({ ...modal, headline: e.target.value })} placeholder="เช่น สร้างรายได้ *หลักแสน* ต่อเดือน" />
+                  <div className="hint">ครอบคำด้วย * เพื่อให้คำนั้นเป็นสีไล่เฉด เช่น สร้างรายได้ *หลักแสน* — ถ้าไม่ใส่ * ทั้งหัวข้อจะเป็นสี</div>
                 </div>
                 <div className="field">
                   <label>รูป hero (URL)</label>
