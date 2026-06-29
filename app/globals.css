@@ -310,3 +310,18 @@ img.dot{object-fit:cover;display:block}
 .img-upload-main{flex:1;min-width:0}
 .img-btns{display:flex;gap:8px;margin-top:8px}
 .img-btns .mini{font-size:.84rem;padding:8px 14px}
+
+/* ===== music button (ซ้ายล่าง) ===== */
+.music-fab{position:fixed;left:18px;bottom:18px;z-index:70;width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;color:#fff;display:grid;place-items:center;background:linear-gradient(135deg,var(--violet),var(--pink));box-shadow:0 14px 30px -10px rgba(124,58,237,.7);transition:transform .18s ease}
+.music-fab:hover{transform:scale(1.1)}
+.music-fab.on{background:linear-gradient(135deg,var(--pink),var(--amber));animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 14px 30px -10px rgba(236,72,153,.7)}50%{box-shadow:0 14px 38px -6px rgba(236,72,153,.95)}}
+.music-fab .note{font-size:1.5rem;line-height:1}
+.music-fab .eq{display:flex;align-items:flex-end;gap:3px;height:20px}
+.music-fab .eq i{width:3px;background:#fff;border-radius:2px;animation:eq 0.9s ease-in-out infinite}
+.music-fab .eq i:nth-child(1){height:8px;animation-delay:0s}
+.music-fab .eq i:nth-child(2){height:18px;animation-delay:.2s}
+.music-fab .eq i:nth-child(3){height:12px;animation-delay:.4s}
+.music-fab .eq i:nth-child(4){height:16px;animation-delay:.1s}
+@keyframes eq{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+@media(prefers-reduced-motion:reduce){.music-fab.on{animation:none}.music-fab .eq i{animation:none}}
