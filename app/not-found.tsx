@@ -7,7 +7,8 @@ export default function NotFound() {
       <span className="blob b2" />
       <div className="land-inner">
         <div className="logo">
-          <span className="dot">AS</span> AutoSponsor
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="dot" src="/logo.png" alt="AutoSponsor" /> AutoSponsor
         </div>
         <h1>
           ไม่พบ<span className="hl">หน้านี้</span>
