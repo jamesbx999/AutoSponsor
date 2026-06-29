@@ -83,6 +83,23 @@ export default function SalePage({ member }: { member: Member }) {
 
   const isFileVideo = /\.(mp4|webm|ogg)(\?.*)?$/i.test(member.videoUrl || "");
 
+  // ทำให้หัวข้อที่ตั้งเองมีสีไล่เฉด: ครอบคำด้วย * เพื่อให้คำนั้นเป็นสี
+  // ถ้าไม่ใส่ * เลย ทั้งหัวข้อจะเป็นสีไล่เฉด
+  function renderHeadline(text: string) {
+    if (text.includes("*")) {
+      return text.split(/(\*[^*]+\*)/g).map((p, i) =>
+        p.startsWith("*") && p.endsWith("*") && p.length > 2 ? (
+          <span className="hl" key={i}>
+            {p.slice(1, -1)}
+          </span>
+        ) : (
+          <span key={i}>{p}</span>
+        )
+      );
+    }
+    return <span className="hl">{text}</span>;
+  }
+
   const photo = member.photo || PROOF_IMG;
   const heroImg = member.heroImage || DEFAULT_HERO;
 
@@ -120,7 +137,7 @@ export default function SalePage({ member }: { member: Member }) {
             <span className="eyebrow">โอกาสธุรกิจสุขภาพ ปี 2026</span>
             <h1>
               {member.headline ? (
-                member.headline
+                renderHeadline(member.headline)
               ) : (
                 <>
                   สร้างรายได้จาก
