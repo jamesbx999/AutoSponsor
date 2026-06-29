@@ -15,6 +15,8 @@ export default function SalePage({ member }: { member: Member }) {
   const [sent, setSent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
+  const [musicOn, setMusicOn] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
 
   // scroll reveal
@@ -58,6 +60,18 @@ export default function SalePage({ member }: { member: Member }) {
   function playVideo() {
     if (member.videoUrl) setShowVideo(true);
     else alert("ผู้แนะนำยังไม่ได้ใส่ลิงก์วิดีโอ");
+  }
+
+  function toggleMusic() {
+    const a = audioRef.current;
+    if (!a) return;
+    if (a.paused) {
+      a.volume = 0.6;
+      a.play().then(() => setMusicOn(true)).catch(() => {});
+    } else {
+      a.pause();
+      setMusicOn(false);
+    }
   }
 
   // ปิด modal ด้วยปุ่ม ESC
@@ -424,6 +438,25 @@ export default function SalePage({ member }: { member: Member }) {
           </div>
         </div>
       </section>
+
+      {/* music player (ซ้ายล่าง) */}
+      <audio ref={audioRef} src={member.musicUrl || "/music.mp3"} loop preload="none" />
+      <button
+        className={`music-fab ${musicOn ? "on" : ""}`}
+        onClick={toggleMusic}
+        aria-label={musicOn ? "หยุดเพลง" : "เปิดเพลง"}
+      >
+        {musicOn ? (
+          <span className="eq">
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+        ) : (
+          <span className="note">♪</span>
+        )}
+      </button>
 
       {/* floating contact */}
       <div className="fab">
