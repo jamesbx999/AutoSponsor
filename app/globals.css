@@ -281,3 +281,19 @@ img.dot{object-fit:cover;display:block}
 .vm-close{position:absolute;top:18px;right:22px;z-index:1;width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,.15);color:#fff;font-size:1.2rem;transition:background .15s ease}
 .vm-close:hover{background:rgba(255,255,255,.3)}
 @media(prefers-reduced-motion:reduce){.video-modal{animation:none}}
+
+/* ===== proof cards redesign (colorful + banner image) ===== */
+.quote{padding:0;overflow:hidden}
+.quote::before{display:none}
+.quote .q-banner{width:100%;aspect-ratio:16/11;object-fit:cover;object-position:center;display:block}
+.quote .q-body{padding:24px 26px 28px;display:flex;flex-direction:column;flex:1}
+.quote.q1{background:linear-gradient(165deg,#F6F0FF,#FCE9F6)}
+.quote.q2{background:linear-gradient(165deg,#E6FBFF,#E9F8F1)}
+.quote.q3{background:linear-gradient(165deg,#FFEFF5,#FFF7EA)}
+.quote .q-name{display:flex;align-items:center;gap:12px;margin-top:18px}
+.quote .q-badge{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;color:#fff;font-family:"Bai Jamjuree";font-weight:700;font-size:1.15rem;flex-shrink:0;box-shadow:0 8px 18px -8px rgba(124,58,237,.6)}
+.quote.q1 .q-badge{background:linear-gradient(135deg,var(--violet),var(--cyan))}
+.quote.q2 .q-badge{background:linear-gradient(135deg,var(--cyan),var(--teal))}
+.quote.q3 .q-badge{background:linear-gradient(135deg,var(--pink),var(--amber))}
+.quote .q-name b{display:block;color:var(--ink)}
+.quote .q-name span{font-size:.85rem;color:var(--muted)}
