@@ -8,7 +8,8 @@ export default function Home() {
       <span className="blob b3" />
       <div className="land-inner">
         <div className="logo">
-          <span className="dot">AS</span> AutoSponsor
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="dot" src="/logo.png" alt="AutoSponsor" /> AutoSponsor
         </div>
         <h1>
           ระบบ<span className="hl">ขยายสายงาน</span>อัจฉริยะ
