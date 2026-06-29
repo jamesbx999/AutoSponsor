@@ -10,6 +10,7 @@ export interface Member {
   headline?: string;    // override หัวข้อ hero (เว้นว่าง = ใช้ค่า default)
   subheadline?: string; // override คำโปรย
   heroImage?: string;   // override รูป hero
+  successImage?: string; // รูปโปสเตอร์ส่วนตัว (แสดงเด่นในส่วนรีวิว)
   videoUrl?: string;    // ลิงก์วิดีโอแนะนำ (YouTube ฯลฯ)
   createdAt: string;
 }
