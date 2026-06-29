@@ -282,10 +282,14 @@ export default function SalePage({ member }: { member: Member }) {
             <h2>คนธรรมดาที่ตัดสินใจเริ่ม</h2>
             <p>ความสำเร็จที่เกิดจากการลงมือทำและระบบที่ช่วยทำซ้ำได้</p>
           </div>
+          {/* รูปโปสเตอร์ส่วนตัวของสมาชิก (แอดมินกำหนด) — เต็มภาพแนวตั้ง */}
+          <div className="success-feature reveal">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={member.successImage || "/success-1.jpg"} alt={`ความสำเร็จของ ${member.name}`} />
+          </div>
+
           <div className="proof-grid">
             <div className="quote q1 reveal">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="q-banner" src="/success-1.jpg" alt="ความสำเร็จของทีม" />
               <div className="q-body">
                 <div className="stars">★★★★★</div>
                 <p>"เริ่มจากแม่บ้านที่ไม่เคยขายของออนไลน์ ใช้หน้าเว็บที่ทีมแจกให้ ตอนนี้มีรายได้เสริมพอผ่อนรถได้แล้วค่ะ"</p>
@@ -299,8 +303,6 @@ export default function SalePage({ member }: { member: Member }) {
               </div>
             </div>
             <div className="quote q2 reveal">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="q-banner" src="/success-2.jpg" alt="ความสำเร็จของทีม" />
               <div className="q-body">
                 <div className="stars">★★★★★</div>
                 <p>"จุดเปลี่ยนคือมีพี่เลี้ยงสอนจริง และมีระบบให้ลูกทีมก๊อปไปใช้ได้ทันที ทีมโตเร็วกว่าที่คิดมากครับ"</p>
@@ -314,8 +316,6 @@ export default function SalePage({ member }: { member: Member }) {
               </div>
             </div>
             <div className="quote q3 reveal">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="q-banner" src="/success-3.jpg" alt="ความสำเร็จของทีม" />
               <div className="q-body">
                 <div className="stars">★★★★★</div>
                 <p>"ชอบที่สินค้ามีงานวิจัยรองรับ เลยแนะนำได้อย่างสบายใจ ไม่ต้องตื๊อใคร ลูกค้าทักมาเองจากหน้าเว็บ"</p>
