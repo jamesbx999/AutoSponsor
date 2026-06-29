@@ -15,6 +15,7 @@ const EMPTY: Partial<Member> = {
   headline: "",
   subheadline: "",
   heroImage: "",
+  successImage: "",
   videoUrl: "",
 };
 
@@ -415,6 +416,12 @@ export default function AdminPage() {
               <div className="field">
                 <label>วิดีโอแนะนำ (URL)</label>
                 <input value={modal.videoUrl || ""} onChange={(e) => setModal({ ...modal, videoUrl: e.target.value })} placeholder="https://youtube.com/..." />
+              </div>
+
+              <div className="field">
+                <label>รูปโปสเตอร์ส่วนตัว (URL) — แสดงเด่นในส่วนรีวิว</label>
+                <input value={modal.successImage || ""} onChange={(e) => setModal({ ...modal, successImage: e.target.value })} placeholder="https://... (รูปแนวตั้งของสมาชิกคนนี้)" />
+                <div className="hint">ภาพเฉพาะบุคคล แสดงเต็มภาพแนวตั้งตรงกลางส่วน "เสียงจากทีมงาน" — เว้นว่าง = ใช้รูปตัวอย่าง</div>
               </div>
 
               <div className="grid2">
