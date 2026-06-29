@@ -165,7 +165,7 @@ export default function AdminPage() {
         <span className="blob b2" />
         <div className="login-card">
           <div className="logo">
-            <span className="dot">AS</span> AutoSponsor
+            <img className="dot" src="/logo.png" alt="AutoSponsor" /> AutoSponsor
           </div>
           <p>เข้าสู่ระบบหลังบ้านเพื่อจัดการสมาชิกและรายชื่อผู้สนใจ</p>
           <div className="field">
@@ -196,7 +196,7 @@ export default function AdminPage() {
       <div className="admin-head">
         <div className="wrap">
           <div className="brandmark">
-            <span className="dot">AS</span> AutoSponsor Admin
+            <img className="dot" src="/logo.png" alt="AutoSponsor" /> AutoSponsor Admin
           </div>
           <button className="btn btn-ghost" onClick={logout}>
             ออกจากระบบ
