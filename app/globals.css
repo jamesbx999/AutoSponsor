@@ -297,3 +297,9 @@ img.dot{object-fit:cover;display:block}
 .quote.q3 .q-badge{background:linear-gradient(135deg,var(--pink),var(--amber))}
 .quote .q-name b{display:block;color:var(--ink)}
 .quote .q-name span{font-size:.85rem;color:var(--muted)}
+
+/* ===== single personalized poster (เต็มภาพแนวตั้ง) ===== */
+.success-feature{display:flex;justify-content:center;margin:8px auto 44px;position:relative;z-index:1}
+.success-feature img{width:100%;max-width:380px;height:auto;border-radius:20px;display:block;box-shadow:0 26px 60px -28px rgba(124,58,237,.6);border:5px solid #fff}
+/* การ์ดรีวิว: ไม่มี banner แล้ว ให้เนื้อหามี padding ปกติ */
+.quote .q-banner{display:none}
