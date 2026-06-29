@@ -38,6 +38,7 @@ export async function POST(req: Request) {
       headline: body.headline || "",
       subheadline: body.subheadline || "",
       heroImage: body.heroImage || "",
+      successImage: body.successImage || "",
       videoUrl: body.videoUrl || "",
       createdAt: existing?.createdAt || new Date().toISOString(),
     };
