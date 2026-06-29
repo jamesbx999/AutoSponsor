@@ -14,6 +14,7 @@ export default function SalePage({ member }: { member: Member }) {
   const [interest, setInterest] = useState("สนใจร่วมทำธุรกิจ");
   const [sent, setSent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
   // scroll reveal
@@ -55,9 +56,32 @@ export default function SalePage({ member }: { member: Member }) {
   }
 
   function playVideo() {
-    if (member.videoUrl) window.open(member.videoUrl, "_blank");
+    if (member.videoUrl) setShowVideo(true);
     else alert("ผู้แนะนำยังไม่ได้ใส่ลิงก์วิดีโอ");
   }
+
+  // ปิด modal ด้วยปุ่ม ESC
+  useEffect(() => {
+    if (!showVideo) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setShowVideo(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [showVideo]);
+
+  // แปลงลิงก์ YouTube / Vimeo เป็น embed URL
+  function toEmbedUrl(url: string): string {
+    try {
+      const yt = url.match(
+        /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/
+      );
+      if (yt) return `https://www.youtube.com/embed/${yt[1]}?autoplay=1&rel=0`;
+      const vm = url.match(/vimeo\.com\/(\d+)/);
+      if (vm) return `https://player.vimeo.com/video/${vm[1]}?autoplay=1`;
+    } catch {}
+    return url; // ลิงก์อื่น เช่น .mp4 หรือ embed อยู่แล้ว
+  }
+
+  const isFileVideo = /\.(mp4|webm|ogg)(\?.*)?$/i.test(member.videoUrl || "");
 
   const photo = member.photo || PROOF_IMG;
   const heroImg = member.heroImage || DEFAULT_HERO;
@@ -68,7 +92,7 @@ export default function SalePage({ member }: { member: Member }) {
       <header className="topbar">
         <div className="wrap">
           <div className="brandmark">
-            <span className="dot">IL</span> Innova Life
+            <img className="dot" src="/logo.png" alt="Innova Life" /> Innova Life
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <div className="ref-badge">
@@ -398,6 +422,27 @@ export default function SalePage({ member }: { member: Member }) {
         )}
       </div>
 
+      {/* video modal */}
+      {showVideo && member.videoUrl && (
+        <div className="video-modal" onClick={() => setShowVideo(false)}>
+          <button className="vm-close" onClick={() => setShowVideo(false)} aria-label="ปิด">
+            ✕
+          </button>
+          <div className="vm-frame" onClick={(e) => e.stopPropagation()}>
+            {isFileVideo ? (
+              <video src={member.videoUrl} controls autoPlay style={{ width: "100%", height: "100%" }} />
+            ) : (
+              <iframe
+                src={toEmbedUrl(member.videoUrl)}
+                title="วิดีโอแนะนำธุรกิจ"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowFullScreen
+              />
+            )}
+          </div>
+        </div>
+      )}
+
       {/* footer */}
       <footer>
         <svg className="wave" viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -410,7 +455,7 @@ export default function SalePage({ member }: { member: Member }) {
         <div className="wrap">
           <div className="ft-top">
             <div className="brandmark">
-              <span className="dot">IL</span> Innova Life
+              <img className="dot" src="/logo.png" alt="Innova Life" /> Innova Life
             </div>
             <div>
               แนะนำโดย <b style={{ color: "#fff" }}>{member.name}</b>
