@@ -180,7 +180,7 @@ export default function SalePage({ member }: { member: Member }) {
                 <span className="l">ปีงานวิจัย R&amp;D</span>
               </div>
               <div className="t">
-                <span className="n">9.2%</span>
+                <span className="n">92%</span>
                 <span className="l">อัตราปิดการสมัคร*</span>
               </div>
               <div className="t">
