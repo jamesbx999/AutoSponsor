@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Member, Lead } from "@/lib/types";
 
 const EMPTY: Partial<Member> = {
@@ -18,6 +18,106 @@ const EMPTY: Partial<Member> = {
   successImage: "",
   videoUrl: "",
 };
+
+// ย่อ/บีบรูปฝั่ง client ก่อนส่ง (กันไฟล์ใหญ่เกิน)
+function fileToCompressedDataUrl(file: File, maxDim = 900, quality = 0.82): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > height && width > maxDim) {
+          height = (height * maxDim) / width;
+          width = maxDim;
+        } else if (height > maxDim) {
+          width = (width * maxDim) / height;
+          height = maxDim;
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(width);
+        canvas.height = Math.round(height);
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return reject(new Error("canvas error"));
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.onerror = reject;
+      img.src = reader.result as string;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ฟิลด์รูป: ใส่ URL เองก็ได้ หรือกดอัปโหลดจากเครื่อง
+function ImgUpload({
+  label,
+  hint,
+  value,
+  onChange,
+}: {
+  label: string;
+  hint?: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setBusy(true);
+    try {
+      const dataUrl = await fileToCompressedDataUrl(f);
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dataUrl }),
+      });
+      const d = await res.json();
+      if (d.url) onChange(d.url);
+      else alert(d.error || "อัปโหลดไม่สำเร็จ");
+    } catch {
+      alert("อ่านไฟล์รูปไม่สำเร็จ");
+    } finally {
+      setBusy(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }
+
+  return (
+    <div className="field">
+      <label>{label}</label>
+      <div className="img-upload">
+        {value && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className="img-prev" src={value} alt="preview" />
+        )}
+        <div className="img-upload-main">
+          <input
+            value={value || ""}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="วาง URL หรือกดอัปโหลด"
+          />
+          <div className="img-btns">
+            <button type="button" className="mini copy" onClick={() => inputRef.current?.click()} disabled={busy}>
+              {busy ? "กำลังอัป..." : "📤 อัปโหลดรูป"}
+            </button>
+            {value && (
+              <button type="button" className="mini del" onClick={() => onChange("")}>
+                ลบรูป
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+      <input ref={inputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={onPick} />
+      {hint && <div className="hint">{hint}</div>}
+    </div>
+  );
+}
 
 export default function AdminPage() {
   const [authed, setAuthed] = useState<boolean | null>(null);
@@ -401,11 +501,15 @@ export default function AdminPage() {
                   <label>ลิงก์ Messenger</label>
                   <input value={modal.messengerUrl || ""} onChange={(e) => setModal({ ...modal, messengerUrl: e.target.value })} placeholder="https://m.me/username" />
                 </div>
-                <div className="field">
-                  <label>รูปโปรไฟล์ (URL)</label>
-                  <input value={modal.photo || ""} onChange={(e) => setModal({ ...modal, photo: e.target.value })} placeholder="https://..." />
-                </div>
+                <div className="field" />
               </div>
+
+              <ImgUpload
+                label="รูปโปรไฟล์"
+                hint="รูปหน้าตรงของสมาชิก แสดงที่แถบบนและปุ่มติดต่อ"
+                value={modal.photo || ""}
+                onChange={(v) => setModal({ ...modal, photo: v })}
+              />
 
               <div className="field">
                 <label>Webhook รับแจ้งเตือน lead</label>
@@ -418,23 +522,24 @@ export default function AdminPage() {
                 <input value={modal.videoUrl || ""} onChange={(e) => setModal({ ...modal, videoUrl: e.target.value })} placeholder="https://youtube.com/..." />
               </div>
 
+              <ImgUpload
+                label="รูปโปสเตอร์ส่วนตัว — แสดงเด่นในส่วนรีวิว"
+                hint='ภาพเฉพาะบุคคล แสดงเต็มภาพแนวตั้งตรงกลางส่วน "เสียงจากทีมงาน" — เว้นว่าง = ใช้รูปตัวอย่าง'
+                value={modal.successImage || ""}
+                onChange={(v) => setModal({ ...modal, successImage: v })}
+              />
+
               <div className="field">
-                <label>รูปโปสเตอร์ส่วนตัว (URL) — แสดงเด่นในส่วนรีวิว</label>
-                <input value={modal.successImage || ""} onChange={(e) => setModal({ ...modal, successImage: e.target.value })} placeholder="https://... (รูปแนวตั้งของสมาชิกคนนี้)" />
-                <div className="hint">ภาพเฉพาะบุคคล แสดงเต็มภาพแนวตั้งตรงกลางส่วน "เสียงจากทีมงาน" — เว้นว่าง = ใช้รูปตัวอย่าง</div>
+                <label>หัวข้อ hero (เว้นว่าง = ค่าเริ่มต้น)</label>
+                <input value={modal.headline || ""} onChange={(e) => setModal({ ...modal, headline: e.target.value })} placeholder="เช่น สร้างรายได้ *หลักแสน* ต่อเดือน" />
+                <div className="hint">ครอบคำด้วย * เพื่อให้คำนั้นเป็นสีไล่เฉด เช่น สร้างรายได้ *หลักแสน* — ถ้าไม่ใส่ * ทั้งหัวข้อจะเป็นสี</div>
               </div>
 
-              <div className="grid2">
-                <div className="field">
-                  <label>หัวข้อ hero (เว้นว่าง = ค่าเริ่มต้น)</label>
-                  <input value={modal.headline || ""} onChange={(e) => setModal({ ...modal, headline: e.target.value })} placeholder="เช่น สร้างรายได้ *หลักแสน* ต่อเดือน" />
-                  <div className="hint">ครอบคำด้วย * เพื่อให้คำนั้นเป็นสีไล่เฉด เช่น สร้างรายได้ *หลักแสน* — ถ้าไม่ใส่ * ทั้งหัวข้อจะเป็นสี</div>
-                </div>
-                <div className="field">
-                  <label>รูป hero (URL)</label>
-                  <input value={modal.heroImage || ""} onChange={(e) => setModal({ ...modal, heroImage: e.target.value })} placeholder="https://..." />
-                </div>
-              </div>
+              <ImgUpload
+                label="รูป hero (พื้นหลังการ์ดวิดีโอด้านบน)"
+                value={modal.heroImage || ""}
+                onChange={(v) => setModal({ ...modal, heroImage: v })}
+              />
 
               <div className="field">
                 <label>คำโปรย (เว้นว่าง = ค่าเริ่มต้น)</label>
