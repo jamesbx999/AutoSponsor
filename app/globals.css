@@ -325,3 +325,6 @@ img.dot{object-fit:cover;display:block}
 .music-fab .eq i:nth-child(4){height:16px;animation-delay:.1s}
 @keyframes eq{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
 @media(prefers-reduced-motion:reduce){.music-fab.on{animation:none}.music-fab .eq i{animation:none}}
+
+/* audio preview in admin */
+.audio-prev{height:40px;max-width:220px;flex-shrink:0}
