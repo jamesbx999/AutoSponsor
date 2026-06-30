@@ -17,70 +17,106 @@ const EMPTY: Partial<Member> = {
   heroImage: "",
   successImage: "",
   videoUrl: "",
+  musicUrl: "",
 };
 
-// ย่อ/บีบรูปฝั่ง client ก่อนส่ง (กันไฟล์ใหญ่เกิน)
-function fileToCompressedDataUrl(file: File, maxDim = 900, quality = 0.82): Promise<string> {
+// ย่อ/บีบรูปฝั่ง client ก่อนส่ง (ลด quality วนจนได้ขนาดเป้าหมาย กันไฟล์ใหญ่เกิน)
+function fileToCompressedDataUrl(file: File, maxDim = 1000, targetBytes = 700000): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
+    reader.onerror = () => reject(new Error("read"));
     reader.onload = () => {
       const img = new Image();
+      img.onerror = () => reject(new Error("decode"));
       img.onload = () => {
-        let { width, height } = img;
-        if (width > height && width > maxDim) {
-          height = (height * maxDim) / width;
-          width = maxDim;
-        } else if (height > maxDim) {
-          width = (width * maxDim) / height;
-          height = maxDim;
+        try {
+          const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          const w = Math.round(img.width * scale);
+          const h = Math.round(img.height * scale);
+          const canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return reject(new Error("canvas"));
+          ctx.drawImage(img, 0, 0, w, h);
+          let q = 0.85;
+          let out = canvas.toDataURL("image/jpeg", q);
+          while (out.length > targetBytes && q > 0.4) {
+            q -= 0.1;
+            out = canvas.toDataURL("image/jpeg", q);
+          }
+          resolve(out);
+        } catch {
+          reject(new Error("canvas"));
         }
-        const canvas = document.createElement("canvas");
-        canvas.width = Math.round(width);
-        canvas.height = Math.round(height);
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return reject(new Error("canvas error"));
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL("image/jpeg", quality));
       };
-      img.onerror = reject;
       img.src = reader.result as string;
     };
-    reader.onerror = reject;
     reader.readAsDataURL(file);
   });
 }
 
-// ฟิลด์รูป: ใส่ URL เองก็ได้ หรือกดอัปโหลดจากเครื่อง
+// ฟิลด์อัปโหลด: รูป (บีบก่อน) หรือเพลง (อ่านตรงๆ) — ใส่ URL เองก็ได้
 function ImgUpload({
   label,
   hint,
   value,
   onChange,
+  audio,
 }: {
   label: string;
   hint?: string;
   value: string;
   onChange: (v: string) => void;
+  audio?: boolean;
 }) {
   const [busy, setBusy] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  function readAsDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result as string);
+      r.onerror = () => reject(new Error("read"));
+      r.readAsDataURL(file);
+    });
+  }
+
   async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
     if (!f) return;
+    const okType = audio ? f.type.startsWith("audio/") : f.type.startsWith("image/");
+    if (!okType) {
+      alert(audio ? "กรุณาเลือกไฟล์เพลง (.mp3)" : "กรุณาเลือกไฟล์รูปภาพ (.jpg .png)");
+      return;
+    }
     setBusy(true);
     try {
-      const dataUrl = await fileToCompressedDataUrl(f);
+      let dataUrl: string;
+      try {
+        dataUrl = audio ? await readAsDataUrl(f) : await fileToCompressedDataUrl(f);
+      } catch {
+        alert(audio ? "อ่านไฟล์เพลงไม่สำเร็จ" : "อ่าน/แปลงไฟล์รูปไม่สำเร็จ — ลองรูป .jpg หรือ .png");
+        return;
+      }
+      if (audio && dataUrl.length > 1_300_000) {
+        alert("ไฟล์เพลงใหญ่เกินไป — ใช้ไฟล์เล็กกว่า ~0.9MB (เพลงสั้นๆ/บีบ bitrate ต่ำลง)");
+        return;
+      }
       const res = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ dataUrl }),
       });
-      const d = await res.json();
-      if (d.url) onChange(d.url);
-      else alert(d.error || "อัปโหลดไม่สำเร็จ");
-    } catch {
-      alert("อ่านไฟล์รูปไม่สำเร็จ");
+      let d: any = null;
+      try {
+        d = await res.json();
+      } catch {}
+      if (res.ok && d?.url) {
+        onChange(d.url);
+      } else {
+        alert("อัปโหลดไม่สำเร็จ: " + (d?.error || `HTTP ${res.status}`));
+      }
     } finally {
       setBusy(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -91,29 +127,30 @@ function ImgUpload({
     <div className="field">
       <label>{label}</label>
       <div className="img-upload">
-        {value && (
+        {value && !audio && (
           // eslint-disable-next-line @next/next/no-img-element
           <img className="img-prev" src={value} alt="preview" />
         )}
+        {value && audio && <audio className="audio-prev" src={value} controls preload="none" />}
         <div className="img-upload-main">
           <input
             value={value || ""}
             onChange={(e) => onChange(e.target.value)}
-            placeholder="วาง URL หรือกดอัปโหลด"
+            placeholder={audio ? "วาง URL เพลง หรือกดอัปโหลด" : "วาง URL หรือกดอัปโหลด"}
           />
           <div className="img-btns">
             <button type="button" className="mini copy" onClick={() => inputRef.current?.click()} disabled={busy}>
-              {busy ? "กำลังอัป..." : "📤 อัปโหลดรูป"}
+              {busy ? "กำลังอัป..." : audio ? "🎵 อัปโหลดเพลง" : "📤 อัปโหลดรูป"}
             </button>
             {value && (
               <button type="button" className="mini del" onClick={() => onChange("")}>
-                ลบรูป
+                {audio ? "ลบเพลง" : "ลบรูป"}
               </button>
             )}
           </div>
         </div>
       </div>
-      <input ref={inputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={onPick} />
+      <input ref={inputRef} type="file" accept={audio ? "audio/*" : "image/*"} style={{ display: "none" }} onChange={onPick} />
       {hint && <div className="hint">{hint}</div>}
     </div>
   );
@@ -521,6 +558,14 @@ export default function AdminPage() {
                 <label>วิดีโอแนะนำ (URL)</label>
                 <input value={modal.videoUrl || ""} onChange={(e) => setModal({ ...modal, videoUrl: e.target.value })} placeholder="https://youtube.com/..." />
               </div>
+
+              <ImgUpload
+                audio
+                label="เพลงประกอบหน้าเว็บ"
+                hint="เล่นเมื่อกดปุ่ม ♪ มุมซ้ายล่าง — เว้นว่าง = ใช้เพลงเริ่มต้น (ไฟล์ mp3 สั้นๆ ~0.9MB)"
+                value={modal.musicUrl || ""}
+                onChange={(v) => setModal({ ...modal, musicUrl: v })}
+              />
 
               <ImgUpload
                 label="รูปโปสเตอร์ส่วนตัว — แสดงเด่นในส่วนรีวิว"
