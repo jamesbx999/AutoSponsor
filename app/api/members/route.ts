@@ -40,6 +40,7 @@ export async function POST(req: Request) {
       heroImage: body.heroImage || "",
       successImage: body.successImage || "",
       videoUrl: body.videoUrl || "",
+      musicUrl: body.musicUrl || "",
       createdAt: existing?.createdAt || new Date().toISOString(),
     };
     await saveMember(member);
